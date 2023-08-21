@@ -1,7 +1,7 @@
 package com.example.CourseWork2basic.controller;
 
 import com.example.CourseWork2basic.entity.Question;
-import com.example.CourseWork2basic.service.JavaQuestionService;
+import com.example.CourseWork2basic.service.QuestionService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,25 +13,25 @@ import java.util.Collection;
 @RequestMapping("/java")
 public class JavaQuestionController {
 
-    private final JavaQuestionService javaQuestionService;
+    private final QuestionService questionService;
 
-    public JavaQuestionController(JavaQuestionService javaQuestionService) {
-        this.javaQuestionService = javaQuestionService;
+    public JavaQuestionController(QuestionService questionService) {
+        this.questionService = questionService;
     }
 
     @GetMapping("/add")
     public Question add(@RequestParam String question, @RequestParam String answer) {
-        return javaQuestionService.add(question, answer);
+        return questionService.add(question, answer);
     }
 
     @GetMapping("/remove")
     public Question remove(@RequestParam String question, @RequestParam String answer) {
         Question questionForDelete = new Question(question, answer);
-        return javaQuestionService.remove(questionForDelete);
+        return questionService.remove(questionForDelete);
     }
 
     @GetMapping
     public Collection<Question> get() {
-        return javaQuestionService.getAll();
+        return questionService.getAll();
     }
 }
