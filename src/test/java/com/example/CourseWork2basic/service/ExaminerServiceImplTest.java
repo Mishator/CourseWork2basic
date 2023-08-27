@@ -4,7 +4,10 @@ import com.example.CourseWork2basic.entity.Question;
 import com.example.CourseWork2basic.exception.IncorrectQuestionCountException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,8 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ExaminerServiceImplTest {
 
+    @InjectMocks
     private ExaminerServiceImpl examinerService;
     @Mock
     private QuestionService questionService;
@@ -38,6 +43,11 @@ class ExaminerServiceImplTest {
             allQuestions.add(question3);
 
             when(questionService.getAll()).thenReturn(allQuestions);
+
+            when(questionService.getRandomQuestion())
+                    .thenReturn(question1)
+                    .thenReturn(question2)
+                    .thenReturn(question3);
 
             //Подготовка ожидаемого результата
             Collection<Question> returnedQuestions = examinerService.getQuestions(amount);
