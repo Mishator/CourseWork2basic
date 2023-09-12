@@ -1,15 +1,16 @@
 package com.example.CourseWork2basic.service;
 
 import com.example.CourseWork2basic.entity.Question;
+import com.example.CourseWork2basic.repository.JavaQuestionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class JavaQuestionService implements QuestionService {
 
     Set<Question> questions = new HashSet<>();
+
 
     @Override
     public Question add(String question, String answer) {

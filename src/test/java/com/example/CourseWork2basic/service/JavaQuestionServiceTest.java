@@ -1,75 +1,111 @@
 package com.example.CourseWork2basic.service;
 
 import com.example.CourseWork2basic.entity.Question;
+import com.example.CourseWork2basic.repository.JavaQuestionRepository;
+import com.example.CourseWork2basic.repository.QuestionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collection;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class JavaQuestionServiceTest {
 
+    @Mock
+    private JavaQuestionRepository questionRepository;
+
+    @InjectMocks
     private JavaQuestionService questionService;
 
     @BeforeEach
     void setUp() {
-        questionService = new JavaQuestionService();
+        MockitoAnnotations.openMocks(this);
+        questionService = new JavaQuestionService(questionRepository);
     }
 
     @Test
-    void add_withQuestionAndAnswer_shouldAddNewQuestion() {
+    void addQuestion() {
         //Подготовка входных данных
-        String question = "Что такое Java?";
-        String answer = "Java это язык программирования.";
+        Question newQuestion = new Question("Question", "Answer");
+        when(questionRepository.add(newQuestion)).thenReturn(newQuestion);
 
         //Подготовка ожидаемого результата
-        Question addedQuestion = questionService.add(question, answer);
+        Question addedQuestion = questionService.add(newQuestion);
+
 
         //Начало теста
-        assertTrue(questionService.getAll().contains(addedQuestion));
+        assertEquals(newQuestion, addedQuestion);
 
-    }
-
-    @Test
-    void add_withQuestionObject_shouldAddNewQuestion() {
-        //Подготовка входных данных
-        Question question = new Question("Что такое Java?", "Java это язык программирования.");
-
-        //Подготовка ожидаемого результата
-        Question addedQuestion = questionService.add(question);
-
-        //Начало теста
-        assertTrue(questionService.getAll().contains(addedQuestion));
+        verify(questionRepository, times(1)).add(newQuestion);
+        verifyNoMoreInteractions(questionRepository);
 
     }
 
     @Test
-    void remove_withQuestionObject_shouldRemoveQuestion() {
+    void removeQuestion() {
         //Подготовка входных данных
-        Question question = new Question("Что такое Java?", "Java это язык программирования.");
-        questionService.add(question);
+        Question existingQuestion = new Question("Question", "Answer");
+        when(questionRepository.remove(existingQuestion)).thenReturn(existingQuestion);
 
         //Подготовка ожидаемого результата
-        Question removedQuestion = questionService.remove(question);
+        Question removedQuestion = questionService.remove(existingQuestion);
 
         //Начало теста
-        assertFalse(questionService.getAll().contains(removedQuestion));
+        assertEquals(existingQuestion, removedQuestion);
+
+        verify(questionRepository, times(1)).remove(existingQuestion);
+        verifyNoMoreInteractions(questionRepository);
 
     }
 
     @Test
-    void getAll_shouldReturnAllQuestions() {
+    void getAllQuestions() {
         //Подготовка входных данных
-        questionService.add("Что такое Java?", "Java это язык программирования.");
-        questionService.add("Что такое Spring?", "Spring это Java фреймворк.");
-
+        Set<Question> questionSet = new HashSet<>(Arrays.asList(
+                new Question("Question1", "Answer1"),
+                new Question("Question2", "Answer2")
+        ));
+        when(questionRepository.getAll()).thenReturn(questionSet);
 
         //Подготовка ожидаемого результата
-        Collection<Question> allQuestions = questionService.getAll();
+        List<Question> questionList = (List<Question>) questionService.getAll();
 
         //Начало теста
-        assertEquals(2, allQuestions.size());
+        assertEquals(questionSet.size(), questionList.size());
+        assertTrue(questionList.containsAll(questionSet));
+
+        verify(questionRepository).getAll();
+        verifyNoMoreInteractions(questionRepository);
 
     }
+
+    @Test
+    void getRandomQuestion() {
+        //Подготовка входных данных
+        Set<Question> questionSet = new HashSet<>(Arrays.asList(
+                new Question("Question1", "Answer1"),
+                new Question("Question2", "Answer2"),
+                new Question("Question3", "Answer3")
+        ));
+        when(questionRepository.getAll()).thenReturn(questionSet);
+
+        //Подготовка ожидаемого результата
+        Question randomQuestion = questionService.getRandomQuestion();
+
+        //Начало теста
+        assertTrue(questionSet.contains(randomQuestion));
+
+        verify(questionRepository).getAll();
+        verifyNoMoreInteractions(questionRepository);
+    }
+
 }
+
