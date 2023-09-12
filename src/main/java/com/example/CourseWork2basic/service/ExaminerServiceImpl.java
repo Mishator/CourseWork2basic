@@ -25,6 +25,7 @@ public class ExaminerServiceImpl implements ExaminerService {
     }
 
 
+
     @Override
     public Collection<Question> getQuestions(int amount) {
 
